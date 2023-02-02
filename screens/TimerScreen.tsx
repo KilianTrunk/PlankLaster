@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { Text, View } from "../components/Themed";
-
+import { Modal } from "react-native";
+import { View, Text } from "../components/Themed";
 import styles from "../styling/styles";
-
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
 import { Button } from "@rneui/themed";
-
 import firebase from "../database/firebase";
+import FirstTimeScreen from "./FirstTimeScreen";
 
 export default function TimerScreen() {
   const [duration, setDuration] = useState(10);
   const [remainingTime, setRemainingTime] = useState<number>();
   const [elapsedTime, setElapsedTime] = useState<number>();
-  const [isTimerPlaying, setIsTimerPlaying] = useState(true);
+  const [isTimerPlaying, setIsTimerPlaying] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showFirstTimeModal, setShowFirstTimeModal] = useState(true);
   const [username, setUsername] = useState(
     firebase.auth().currentUser?.displayName
   );
@@ -36,6 +36,7 @@ export default function TimerScreen() {
     console.log(username);
   };
 
+
   useEffect(() => {
     const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
       if (user) {
@@ -51,6 +52,17 @@ export default function TimerScreen() {
   return (
     <View style={styles.container}>
       <Text>Hello, {username}</Text>
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={showFirstTimeModal}
+      >
+        <FirstTimeScreen
+          closeModal={() => {
+            setShowFirstTimeModal(false);
+          }}
+        />
+      </Modal>
       <View style={styles.timerContainer}>
         <CountdownCircleTimer
           isPlaying={isTimerPlaying}
@@ -78,7 +90,10 @@ export default function TimerScreen() {
           color: "#2a2438",
         }}
         iconRight
-        onPress={() => onPressPause()}
+        onPress={() => {
+          onPressPause();
+          handleICouldntLastLonger();
+        }}
       >
         I couldn't last longer
       </Button>
@@ -87,3 +102,4 @@ export default function TimerScreen() {
     </View>
   );
 }
+

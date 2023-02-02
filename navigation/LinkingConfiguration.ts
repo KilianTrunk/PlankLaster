@@ -32,6 +32,7 @@ const linking: LinkingOptions<RootStackParamList> = {
       Login: 'login',
       Register: 'register',
       Timer: 'timer',
+      FirstTime: 'firstTime',
     },
   },
 };

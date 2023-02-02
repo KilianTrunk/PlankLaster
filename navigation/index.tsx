@@ -10,6 +10,7 @@ import LinkingConfiguration from './LinkingConfiguration';
 import RegisterScreen from '../screens/RegisterScreen';
 import LoginScreen from '../screens/LoginScreen';
 import TimerScreen from '../screens/TimerScreen';
+import FirstTimeScreen from '../screens/FirstTimeScreen';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -31,6 +32,7 @@ function RootNavigator() {
       <Stack.Screen name="Register" component={RegisterScreen} />
       <Stack.Group screenOptions={{ presentation: "modal" }}>
         <Stack.Screen name="Modal" component={ModalScreen} />
+        <Stack.Screen name="FirstTime" component={FirstTimeScreen} />
       </Stack.Group>
     </Stack.Navigator>
   );
