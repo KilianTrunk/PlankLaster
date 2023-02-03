@@ -5,7 +5,8 @@ import styles from "../styling/styles";
 import { Input } from "@rneui/base";
 import { Button, Icon } from "@rneui/themed";
 
-import firebase from "../database/firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../database/firebase";
 
 import "../types";
 
@@ -19,17 +20,21 @@ export default function LoginScreen({ navigation }: any) {
   };
 
   const userLogin = () => {
-    if (password === "" || email === "") {
+    if (email === "" || password === "") {
       alert("Vnesite manjkajoče podatke!");
     } else {
-      firebase
-        .auth()
-        .signInWithEmailAndPassword(email, password)
-        .then((res: any) => {
-          alert("Prijava je bila uspešna!");
-          setEmail("");
-          setPassword("");
-          navigation.navigate("Timer");
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          // Signed in 
+          const user = userCredential.user;
+          // ...
+          navigation.navigate('Timer')
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          console.log(errorCode);
+          const errorMessage = error.message;
+          console.log(errorMessage);
         });
     }
   };

@@ -10,19 +10,18 @@ interface FirstTimeScreenProps {
 export default function FirstTimeScreen(props: FirstTimeScreenProps) {
   return (
     <View style={styles.container}>
-      <Text>
+      <Text style={styles.alreadyOrNotRegisteredText}>
         For starters, lets try to break the world record lasting in the plank
-        position as long as George Hood did
+        position as long as the current world record holder George Hood did (This way we will be able to identicate your current longest lasting
+        plank)
       </Text>
-      <Text>
+      <Text style={styles.alreadyOrNotRegisteredText}>
         Note : when you can't last longer, make sure to press on the "I couldn't
         last longer" button
       </Text>
-      <Text>
-        This way we will be able to identicate your current longest lasting
-        plank
-      </Text>
       <Button
+        titleStyle={styles.buttonTitle}
+        buttonStyle={styles.button}
         icon={{
           name: "arrow-right",
           type: "font-awesome",

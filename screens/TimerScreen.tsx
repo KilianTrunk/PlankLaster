@@ -4,8 +4,11 @@ import { View, Text } from "../components/Themed";
 import styles from "../styling/styles";
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
 import { Button } from "@rneui/themed";
-import firebase from "../database/firebase";
 import FirstTimeScreen from "./FirstTimeScreen";
+
+import { getAuth } from "firebase/auth";
+import { getDatabase, ref, set } from "firebase/database";
+
 
 export default function TimerScreen() {
   const [duration, setDuration] = useState(10);
@@ -14,9 +17,7 @@ export default function TimerScreen() {
   const [isTimerPlaying, setIsTimerPlaying] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showFirstTimeModal, setShowFirstTimeModal] = useState(true);
-  const [username, setUsername] = useState(
-    firebase.auth().currentUser?.displayName
-  );
+  const [username, setUsername] = useState<string>("");
 
   const onPressPause = () => {
     setIsTimerPlaying(!isTimerPlaying);
@@ -38,15 +39,25 @@ export default function TimerScreen() {
 
 
   useEffect(() => {
-    const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        setUsername(user.displayName);
-      } else {
-        setUsername(null);
-        console.log("Ni prijavljenega user-ja");
-      }
-    });
-    return () => unsubscribe();
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (user && user.displayName) {
+      // User is signed in, see docs for a list of available properties
+      // https://firebase.google.com/docs/reference/js/firebase.User
+      // ...
+      setUsername(user.displayName);
+      console.log(user.displayName);
+      // DATABASE
+      /*
+      const db = getDatabase();
+      set(ref(db, 'users/' + username), {
+        remainingTime: username
+      });
+      */
+    } else {
+      // No user is signed in.
+    }
   }, []);
 
   return (
@@ -92,7 +103,6 @@ export default function TimerScreen() {
         iconRight
         onPress={() => {
           onPressPause();
-          handleICouldntLastLonger();
         }}
       >
         I couldn't last longer
