@@ -5,7 +5,7 @@ import styles from "../styling/styles";
 import { Input } from "@rneui/base";
 import { Button, Icon } from "@rneui/themed";
 
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 
 
 import "../types";
@@ -22,13 +22,27 @@ export default function RegisterScreen({ navigation }: any) {
 
   const registerUser = () => {
     if (email === "" || password === "" || username === "") {
-      alert("Vnesite manjkajoče podatke!");
+      alert("Enter missing information!");
     } else {
       const auth = getAuth();
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           // Signed in 
           const user = userCredential.user;
+          
+          if (auth.currentUser) {
+            updateProfile(auth.currentUser, {
+              displayName: username
+            })
+              .then(() => {
+                console.log("User's display name was set successfully!")
+              })
+              .catch((error) => {
+                console.log(error.message);
+              });
+          }
+
+          alert("Registration was successfull! You may login now!")
           // ...
         })
         .catch((error) => {

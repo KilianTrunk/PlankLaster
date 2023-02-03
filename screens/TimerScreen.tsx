@@ -9,56 +9,51 @@ import FirstTimeScreen from "./FirstTimeScreen";
 import { getAuth } from "firebase/auth";
 import { getDatabase, ref, set } from "firebase/database";
 
-
 export default function TimerScreen() {
   const [duration, setDuration] = useState(10);
   const [remainingTime, setRemainingTime] = useState<number>();
-  const [elapsedTime, setElapsedTime] = useState<number>();
+  const [lastedTime, setLastedTime] = useState<number>();
   const [isTimerPlaying, setIsTimerPlaying] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showFirstTimeModal, setShowFirstTimeModal] = useState(true);
   const [username, setUsername] = useState<string>("");
 
   const onPressPause = () => {
+    calculateLastedTime();
     setIsTimerPlaying(!isTimerPlaying);
-    calculateElapsedTime();
   };
 
   const handleUpdate = (remainingTime: any) => {
     setRemainingTime(remainingTime);
   };
 
-  const calculateElapsedTime = () => {
-    if (remainingTime) {
-      let timeElapsed = duration - remainingTime;
-      setElapsedTime(timeElapsed);
+  const saveLastedTime = () => {
+    if (username && lastedTime) {
+      const db = getDatabase();
+      set(ref(db, `users/${username}`), {
+        lastedTime
+      });
     }
-
-    console.log(username);
   };
 
+  const calculateLastedTime = () => {
+    if (remainingTime) {
+      let timeLasted= duration - remainingTime;
+      setLastedTime(timeLasted);
+    }
+  };
 
   useEffect(() => {
     const auth = getAuth();
     const user = auth.currentUser;
 
     if (user && user.displayName) {
-      // User is signed in, see docs for a list of available properties
-      // https://firebase.google.com/docs/reference/js/firebase.User
-      // ...
       setUsername(user.displayName);
-      console.log(user.displayName);
-      // DATABASE
-      /*
-      const db = getDatabase();
-      set(ref(db, 'users/' + username), {
-        remainingTime: username
-      });
-      */
-    } else {
-      // No user is signed in.
     }
   }, []);
+
+  useEffect(() => {
+    saveLastedTime();
+  });
 
   return (
     <View style={styles.container}>
@@ -108,7 +103,7 @@ export default function TimerScreen() {
         I couldn't last longer
       </Button>
       {!isTimerPlaying && <Text>Remaining Time: {remainingTime}</Text>}
-      {!isTimerPlaying && <Text>Elapsed Time: {elapsedTime}</Text>}
+      {!isTimerPlaying && <Text>Lasted Time: {lastedTime}</Text>}
     </View>
   );
 }

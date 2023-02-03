@@ -21,7 +21,7 @@ export default function LoginScreen({ navigation }: any) {
 
   const userLogin = () => {
     if (email === "" || password === "") {
-      alert("Vnesite manjkajoče podatke!");
+      alert("Enter missing information!");
     } else {
       signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
