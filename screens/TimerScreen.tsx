@@ -10,16 +10,31 @@ import { getAuth } from "firebase/auth";
 import { getDatabase, ref, set } from "firebase/database";
 
 export default function TimerScreen() {
-  const [duration, setDuration] = useState(10);
+  const [duration, setDuration] = useState<number>(10);
   const [remainingTime, setRemainingTime] = useState<number>();
   const [lastedTime, setLastedTime] = useState<number>();
-  const [isTimerPlaying, setIsTimerPlaying] = useState(false);
-  const [showFirstTimeModal, setShowFirstTimeModal] = useState(true);
+  const [isTimerPlaying, setIsTimerPlaying] = useState<boolean>(false);
+  const [showFirstTimeModal, setShowFirstTimeModal] = useState<boolean>(true);
   const [username, setUsername] = useState<string>("");
+  const [buttonTitle, setButtonTitle] = useState<string>("Start");
+  const [buttonDisabled, setButtonDisabled] = useState<boolean>(false);
+  const [buttonIcon, setButtonIcon] = useState<string>("play");
+
+  const handleButtonTitle = () => {
+    if(buttonTitle == "I couldn't last longer")
+    {
+      setButtonDisabled(true);
+    } else
+    {
+      setButtonTitle("I couldn't last longer");
+      setButtonIcon("emoticon-sad");
+    }
+  }
 
   const onPressPause = () => {
     calculateLastedTime();
     setIsTimerPlaying(!isTimerPlaying);
+    handleButtonTitle();
   };
 
   const handleUpdate = (remainingTime: any) => {
@@ -37,7 +52,7 @@ export default function TimerScreen() {
 
   const calculateLastedTime = () => {
     if (remainingTime) {
-      let timeLasted= duration - remainingTime;
+      let timeLasted = duration - remainingTime;
       setLastedTime(timeLasted);
     }
   };
@@ -53,6 +68,11 @@ export default function TimerScreen() {
 
   useEffect(() => {
     saveLastedTime();
+
+    if(buttonDisabled == true)
+    {
+      //if()
+    }
   });
 
   return (
@@ -78,7 +98,11 @@ export default function TimerScreen() {
           colorsTime={[7, 5, 0]}
           onUpdate={handleUpdate}
           onComplete={() => {
-            return { shouldRepeat: true };
+            setLastedTime(duration);
+            setButtonDisabled(true);
+            saveLastedTime();
+            setButtonTitle("Congratulations!");
+            setButtonIcon("emoticon-happy");
           }}
         >
           {({ remainingTime }) => (
@@ -89,8 +113,9 @@ export default function TimerScreen() {
       <Button
         titleStyle={styles.buttonTitle}
         buttonStyle={styles.button}
+        disabled={buttonDisabled}
         icon={{
-          name: "emoticon-sad",
+          name: buttonIcon,
           type: "material-community",
           size: 16,
           color: "#2a2438",
@@ -100,7 +125,7 @@ export default function TimerScreen() {
           onPressPause();
         }}
       >
-        I couldn't last longer
+        {buttonTitle}
       </Button>
       {!isTimerPlaying && <Text>Remaining Time: {remainingTime}</Text>}
       {!isTimerPlaying && <Text>Lasted Time: {lastedTime}</Text>}
