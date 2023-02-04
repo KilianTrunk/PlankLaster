@@ -12,7 +12,7 @@ export default function FirstTimeScreen(props: FirstTimeScreenProps) {
     <View style={styles.container}>
       <Text style={styles.alreadyOrNotRegisteredText}>
         For starters, lets try to break the world record lasting in the plank
-        position as long as the current world record holder George Hood did (This way we will be able to identicate your current longest lasting
+        position as long as the current world record holder Daniel Scali did - 9 hours, 30 minutes and 1 second (This way we will be able to identicate your current longest lasting
         plank)
       </Text>
       <Text style={styles.alreadyOrNotRegisteredText}>
