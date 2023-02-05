@@ -13,6 +13,7 @@ export default function UserLastedScreen(props: UserLastedScreenProps) {
             <Text style={styles.alreadyOrNotRegisteredText}>
                 UserLastedScreen TEST
             </Text>
+            <Text></Text>
             <Button
                 titleStyle={styles.buttonTitle}
                 buttonStyle={styles.button}

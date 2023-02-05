@@ -19,6 +19,7 @@ export default function FirstTimeScreen(props: FirstTimeScreenProps) {
         Note : when you can't last longer, make sure to press on the "I couldn't
         last longer" button
       </Text>
+      <Text></Text>
       <Button
         titleStyle={styles.buttonTitle}
         buttonStyle={styles.button}

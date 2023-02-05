@@ -39,7 +39,6 @@ export default function TimerScreen() {
     calculateLastedTime();
     setIsTimerPlaying(!isTimerPlaying);
     handleButtonTitle();
-    console.log(timerColorsTime[0], timerColorsTime[1], timerColorsTime[2], timerColorsTime[3]);
   };
 
   const handleUpdate = (remainingTime: any) => {
@@ -54,11 +53,13 @@ export default function TimerScreen() {
       });
     }
   };
+  
 
   const calculateLastedTime = () => {
     if (remainingTime) {
       let timeLasted = duration - remainingTime;
       setLastedTime(timeLasted);
+      console.log(lastedTime);
     }
   };
 
@@ -97,7 +98,8 @@ export default function TimerScreen() {
 
   return (
     <View style={styles.container}>
-      <Text>Hello, {username}</Text>
+      <Text style={styles.alreadyOrNotRegisteredText}>Hello, {username}</Text>
+      <Text></Text>
       <Modal
         animationType="slide"
         transparent={false}
@@ -130,7 +132,11 @@ export default function TimerScreen() {
           closeModal={() => {
             setShowUserNotLastedModal(false);
             setButtonDisabled(false);
-            setKey(prevKey => prevKey + 1)
+            setKey(prevKey => prevKey + 10);
+            if(lastedTime != undefined)
+            setDuration(lastedTime + 10);
+            setButtonTitle("Start");
+            setButtonIcon("play");
           }}
         />
       </Modal>
@@ -173,8 +179,8 @@ export default function TimerScreen() {
       >
         {buttonTitle}
       </Button>
-      {!isTimerPlaying && <Text>Remaining Time: {remainingTime}</Text>}
-      {!isTimerPlaying && <Text>Lasted Time: {lastedTime}</Text>}
+      {!isTimerPlaying && <Text style={styles.alreadyOrNotRegisteredText}>Remaining Time: {remainingTime}</Text>}
+      {!isTimerPlaying && <Text style={styles.alreadyOrNotRegisteredText}>Lasted Time: {lastedTime}</Text>}
     </View>
   );
 }

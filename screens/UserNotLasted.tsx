@@ -3,16 +3,49 @@ import { View, Text } from "react-native";
 import { Button } from "@rneui/themed";
 import styles from "../styling/styles";
 
+import { getAuth } from "firebase/auth";
+import { getDatabase, ref, child, get } from "firebase/database";
+
 interface UserNotLastedScreenProps {
     closeModal: () => void;
 }
 
 export default function UserNotLastedScreen(props: UserNotLastedScreenProps) {
+    const [username, setUsername] = useState<string>("");
+    const [lastedTime, setLastedTime] = useState<number>();
+
+    const getLastedTime = () => {
+        const dbRef = ref(getDatabase());
+        get(child(dbRef, `users/${username}`)).then((snapshot) => {
+            if (snapshot.exists()) {
+                setLastedTime(snapshot.val().lastedTime);
+            } else {
+                console.log("No data available");
+            }
+        }).catch((error) => {
+            console.error(error);
+        });
+    };
+
+    useEffect(() => {
+        const auth = getAuth();
+        const user = auth.currentUser;
+
+        if (user && user.displayName) {
+            setUsername(user.displayName);
+        }
+    }, []);
+
+    useEffect(() => {
+        getLastedTime();
+    });
+
     return (
         <View style={styles.container}>
             <Text style={styles.alreadyOrNotRegisteredText}>
-                UserNotLastedScreen TEST
+                Your longest lasting plank seems to be exactly {lastedTime} seconds. Lets improve this time by 10 seconds.
             </Text>
+            <Text></Text>
             <Button
                 titleStyle={styles.buttonTitle}
                 buttonStyle={styles.button}
