@@ -27,6 +27,15 @@ export default function TimerScreen() {
   const [timerColorsTime, setTimerColorsTime] = useState<Array<number>>([]);
   const [lastedTimeGoal, setLastedTimeGoal] = useState<number>();
 
+  const saveLastedTimeGoal = () => {
+    if (username && lastedTimeGoal) {
+      const db = getDatabase();
+      update(ref(db, `users/${username}`), {
+        lastedTimeGoal
+      });
+    }
+  }
+
   const getLastedTimeGoal = () => {
     const dbRef = ref(getDatabase());
     get(child(dbRef, `users/${username}`)).then((snapshot) => {
@@ -48,6 +57,11 @@ export default function TimerScreen() {
       setButtonTitle("I couldn't last longer");
       setButtonIcon("emoticon-sad");
     }
+  }
+
+  const increaseLastedTimeGoal = () => {
+    if (lastedTimeGoal)
+      setLastedTimeGoal(lastedTimeGoal + 10)
   }
 
   const onPressPause = () => {
@@ -95,28 +109,31 @@ export default function TimerScreen() {
   }, []);
 
   useEffect(() => {
+    if (lastedTimeGoal == undefined && lastedTime != undefined) {
+      setLastedTimeGoal(lastedTime + 10);
+    }
     saveLastedTime();
-
-    getLastedTimeGoal();
+    saveLastedTimeGoal();
 
     if (buttonDisabled == true) {
       if (buttonTitle == "I couldn't last longer") // timer stopped by user
       {
         setTimeout(() => {
           setShowUserNotLastedModal(true);
-        }, 500); // delay of half a second
+        }, 500);
       } else // timer ran out
       {
+        increaseLastedTimeGoal();
         setShowUserLastedModal(true);
       }
     }
-  }, [buttonDisabled, lastedTime, lastedTimeGoal]);
+  }, [buttonDisabled]);
 
   return (
     <View style={styles.container}>
       <Text style={styles.alreadyOrNotRegisteredText}>Hello, {username}</Text>
       <Text></Text>
-      <Modal
+      {!lastedTimeGoal && <Modal
         animationType="slide"
         transparent={false}
         visible={showFirstTimeModal}
@@ -126,7 +143,7 @@ export default function TimerScreen() {
             setShowFirstTimeModal(false);
           }}
         />
-      </Modal>
+      </Modal>}
       <Modal
         animationType="slide"
         transparent={false}
@@ -135,12 +152,13 @@ export default function TimerScreen() {
         <UserLastedScreen
           closeModal={() => {
             setShowUserLastedModal(false);
-            setButtonDisabled(false);
+            setIsTimerPlaying(false);
             setKey(prevKey => prevKey + 10);
             if (lastedTimeGoal != undefined)
               setDuration(lastedTimeGoal);
             setButtonTitle("Start");
             setButtonIcon("play");
+            setButtonDisabled(false);
           }}
         />
       </Modal>
