@@ -9,7 +9,7 @@ import UserLastedScreen from "./UserLastedScreen";
 import UserNotLastedScreen from "./UserNotLasted";
 
 import { getAuth } from "firebase/auth";
-import { getDatabase, ref, set } from "firebase/database";
+import { getDatabase, ref, update, get, child } from "firebase/database";
 
 export default function TimerScreen() {
   const [duration, setDuration] = useState<number>(34201);
@@ -25,6 +25,21 @@ export default function TimerScreen() {
   const [showUserNotLastedModal, setShowUserNotLastedModal] = useState<boolean>(false);
   const [key, setKey] = useState(0);
   const [timerColorsTime, setTimerColorsTime] = useState<Array<number>>([]);
+  const [lastedTimeGoal, setLastedTimeGoal] = useState<number>();
+
+  const getLastedTimeGoal = () => {
+    const dbRef = ref(getDatabase());
+    get(child(dbRef, `users/${username}`)).then((snapshot) => {
+        if (snapshot.exists()) {
+            setLastedTimeGoal(snapshot.val().lastedTimeGoal);
+            console.log("gr: " +                                                                                                                                                                      lastedTimeGoal);
+        } else {
+            console.log("No data available");
+        }
+    }).catch((error) => {
+        console.error(error);
+    });
+};
 
   const handleButtonTitle = () => {
     if (buttonTitle == "I couldn't last longer") {
@@ -48,7 +63,7 @@ export default function TimerScreen() {
   const saveLastedTime = () => {
     if (username && lastedTime) {
       const db = getDatabase();
-      set(ref(db, `users/${username}`), {
+      update(ref(db, `users/${username}`), {
         lastedTime
       });
     }
@@ -59,7 +74,6 @@ export default function TimerScreen() {
     if (remainingTime) {
       let timeLasted = duration - remainingTime;
       setLastedTime(timeLasted);
-      console.log(lastedTime);
     }
   };
 
@@ -130,11 +144,12 @@ export default function TimerScreen() {
       >
         <UserNotLastedScreen
           closeModal={() => {
+            getLastedTimeGoal();
             setShowUserNotLastedModal(false);
             setButtonDisabled(false);
             setKey(prevKey => prevKey + 10);
-            if(lastedTime != undefined)
-            setDuration(lastedTime + 10);
+            if(lastedTimeGoal != undefined)
+            setDuration(lastedTimeGoal);
             setButtonTitle("Start");
             setButtonIcon("play");
           }}
