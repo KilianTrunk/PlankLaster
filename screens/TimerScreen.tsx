@@ -30,16 +30,16 @@ export default function TimerScreen() {
   const getLastedTimeGoal = () => {
     const dbRef = ref(getDatabase());
     get(child(dbRef, `users/${username}`)).then((snapshot) => {
-        if (snapshot.exists()) {
-            setLastedTimeGoal(snapshot.val().lastedTimeGoal);
-            console.log("gr: " +                                                                                                                                                                      lastedTimeGoal);
-        } else {
-            console.log("No data available");
-        }
+      if (snapshot.exists()) {
+        let newLastingTimeGoal = snapshot.val().lastedTimeGoal;
+        setLastedTimeGoal(newLastingTimeGoal);
+      } else {
+        console.log("No data available");
+      }
     }).catch((error) => {
-        console.error(error);
+      console.error(error);
     });
-};
+  };
 
   const handleButtonTitle = () => {
     if (buttonTitle == "I couldn't last longer") {
@@ -68,7 +68,7 @@ export default function TimerScreen() {
       });
     }
   };
-  
+
 
   const calculateLastedTime = () => {
     if (remainingTime) {
@@ -80,7 +80,7 @@ export default function TimerScreen() {
   const calculateTimerColorsTime = () => {
     setTimerColorsTime([duration, duration * 0.7, duration * 0.5, 0]);
   };
-  
+
   useEffect(() => {
     calculateTimerColorsTime();
   }, [duration]);
@@ -97,6 +97,8 @@ export default function TimerScreen() {
   useEffect(() => {
     saveLastedTime();
 
+    getLastedTimeGoal();
+
     if (buttonDisabled == true) {
       if (buttonTitle == "I couldn't last longer") // timer stopped by user
       {
@@ -108,7 +110,7 @@ export default function TimerScreen() {
         setShowUserLastedModal(true);
       }
     }
-  });
+  }, [buttonDisabled, lastedTime, lastedTimeGoal]);
 
   return (
     <View style={styles.container}>
@@ -134,6 +136,11 @@ export default function TimerScreen() {
           closeModal={() => {
             setShowUserLastedModal(false);
             setButtonDisabled(false);
+            setKey(prevKey => prevKey + 10);
+            if (lastedTimeGoal != undefined)
+              setDuration(lastedTimeGoal);
+            setButtonTitle("Start");
+            setButtonIcon("play");
           }}
         />
       </Modal>
@@ -144,12 +151,11 @@ export default function TimerScreen() {
       >
         <UserNotLastedScreen
           closeModal={() => {
-            getLastedTimeGoal();
             setShowUserNotLastedModal(false);
             setButtonDisabled(false);
             setKey(prevKey => prevKey + 10);
-            if(lastedTimeGoal != undefined)
-            setDuration(lastedTimeGoal);
+            if (lastedTimeGoal != undefined)
+              setDuration(lastedTimeGoal);
             setButtonTitle("Start");
             setButtonIcon("play");
           }}
@@ -194,8 +200,6 @@ export default function TimerScreen() {
       >
         {buttonTitle}
       </Button>
-      {!isTimerPlaying && <Text style={styles.alreadyOrNotRegisteredText}>Remaining Time: {remainingTime}</Text>}
-      {!isTimerPlaying && <Text style={styles.alreadyOrNotRegisteredText}>Lasted Time: {lastedTime}</Text>}
     </View>
   );
 }

@@ -4,7 +4,7 @@ import { Button } from "@rneui/themed";
 import styles from "../styling/styles";
 
 import { getAuth } from "firebase/auth";
-import { getDatabase, ref, child, get, update } from "firebase/database";
+import { getDatabase, ref, child, get } from "firebase/database";
 
 interface UserNotLastedScreenProps {
     closeModal: () => void;
@@ -14,6 +14,20 @@ export default function UserNotLastedScreen(props: UserNotLastedScreenProps) {
     const [username, setUsername] = useState<string>("");
     const [lastedTime, setLastedTime] = useState<number>();
     const [lastedTimeGoal, setLastedTimeGoal] = useState<number>();
+
+    const getLastedTimeGoal = () => {
+        const dbRef = ref(getDatabase());
+        get(child(dbRef, `users/${username}`)).then((snapshot) => {
+            if (snapshot.exists()) {
+                let newLastingTimeGoal = snapshot.val().lastedTimeGoal;
+                setLastedTimeGoal(newLastingTimeGoal);
+            } else {
+                console.log("No data available");
+            }
+        }).catch((error) => {
+            console.error(error);
+        });
+    };
 
     const getLastedTime = () => {
         const dbRef = ref(getDatabase());
@@ -28,20 +42,6 @@ export default function UserNotLastedScreen(props: UserNotLastedScreenProps) {
         });
     };
 
-    const handleLastedTimeGoal = () => {
-        if (lastedTime) {
-            let newLastingTimeGoal = lastedTime + 10;
-            setLastedTimeGoal(newLastingTimeGoal);
-
-            if (lastedTimeGoal) {
-                const db = getDatabase();
-                update(ref(db, `users/${username}`), {
-                    lastedTimeGoal
-                });
-            }
-        }
-    }
-
     useEffect(() => {
         const auth = getAuth();
         const user = auth.currentUser;
@@ -53,15 +53,15 @@ export default function UserNotLastedScreen(props: UserNotLastedScreenProps) {
 
     useEffect(() => {
         getLastedTime();
-        handleLastedTimeGoal();
-    });
+        getLastedTimeGoal();
+    }, []);
 
     return (
         <View style={styles.container}>
-            <Text style={styles.alreadyOrNotRegisteredText}>
-                Your longest lasting plank seems to be exactly {lastedTime} seconds. Lets improve this time by 10 seconds.
-            </Text>
-            <Text></Text>
+            {lastedTimeGoal && <Text style={styles.alreadyOrNotRegisteredText}>
+                Your longest lasting plank goal is {lastedTimeGoal} seconds. Lets try to beat it!
+            </Text>}
+            <Text></Text>  
             <Button
                 titleStyle={styles.buttonTitle}
                 buttonStyle={styles.button}
