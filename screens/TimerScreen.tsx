@@ -38,16 +38,27 @@ export default function TimerScreen() {
 
   const getLastedTimeGoal = () => {
     const dbRef = ref(getDatabase());
-    get(child(dbRef, `users/${username}`)).then((snapshot) => {
-      if (snapshot.exists()) {
-        let newLastingTimeGoal = snapshot.val().lastedTimeGoal;
-        setLastedTimeGoal(newLastingTimeGoal);
-      } else {
-        console.log("No data available");
-      }
-    }).catch((error) => {
-      console.error(error);
-    });
+    
+    if(lastedTimeGoal == undefined)
+    {
+      get(child(dbRef, `users/${username}`)).then((snapshot) => {
+        if (snapshot.exists()) {
+          setLastedTimeGoal(snapshot.val().lastedTimeGoal);
+        } else if(lastedTime) {
+          setLastedTimeGoal(lastedTime + 10);
+          saveLastedTimeGoal();
+        }
+      })
+    } else {
+      saveLastedTimeGoal();
+      get(child(dbRef, `users/${username}`)).then((snapshot) => {
+        if (snapshot.exists()) {
+          setLastedTimeGoal(snapshot.val().lastedTimeGoal);
+        } else {
+          console.log("No data available");
+        }
+      })
+    }
   };
 
   const handleButtonTitle = () => {
@@ -60,8 +71,9 @@ export default function TimerScreen() {
   }
 
   const increaseLastedTimeGoal = () => {
-    if (lastedTimeGoal)
-      setLastedTimeGoal(lastedTimeGoal + 10)
+    if (lastedTimeGoal) {
+      setLastedTimeGoal(lastedTimeGoal + 10);
+    }
   }
 
   const onPressPause = () => {
@@ -83,6 +95,15 @@ export default function TimerScreen() {
     }
   };
 
+  const getLastedTime = () => {
+    const dbRef = ref(getDatabase());
+    get(child(dbRef, `users/${username}`)).then((snapshot) => {
+      if (snapshot.exists()) {
+        setLastedTime(snapshot.val().lastedTime);
+      }
+    })
+  }
+
 
   const calculateLastedTime = () => {
     if (remainingTime) {
@@ -100,6 +121,7 @@ export default function TimerScreen() {
   }, [duration]);
 
   useEffect(() => {
+
     const auth = getAuth();
     const user = auth.currentUser;
 
@@ -109,21 +131,20 @@ export default function TimerScreen() {
   }, []);
 
   useEffect(() => {
-    if (lastedTimeGoal == undefined && lastedTime != undefined) {
-      setLastedTimeGoal(lastedTime + 10);
-    }
+
+    getLastedTimeGoal();
     saveLastedTime();
-    saveLastedTimeGoal();
 
     if (buttonDisabled == true) {
       if (buttonTitle == "I couldn't last longer") // timer stopped by user
       {
+        saveLastedTimeGoal();
         setTimeout(() => {
           setShowUserNotLastedModal(true);
         }, 500);
+
       } else // timer ran out
       {
-        increaseLastedTimeGoal();
         setShowUserLastedModal(true);
       }
     }
@@ -177,6 +198,7 @@ export default function TimerScreen() {
             setButtonTitle("Start");
             setButtonIcon("play");
           }}
+          longestLastingPlankGoal={lastedTimeGoal}
         />
       </Modal>
       <View style={styles.timerContainer}>
@@ -190,6 +212,8 @@ export default function TimerScreen() {
           onUpdate={handleUpdate}
           onComplete={() => {
             setLastedTime(duration);
+            increaseLastedTimeGoal();
+            saveLastedTimeGoal();
             setButtonDisabled(true);
             saveLastedTime();
             setButtonTitle("Congratulations!");
