@@ -152,6 +152,7 @@ export default function TimerScreen() {
 
   return (
     <View style={styles.container}>
+      <Text>TODO: ce je stari user, settaj duration na njegov timelastedgoal</Text>
       <Text style={styles.alreadyOrNotRegisteredText}>Hello, {username}</Text>
       <Text></Text>
       {!lastedTimeGoal && <Modal
