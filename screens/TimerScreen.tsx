@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Modal } from "react-native";
+import { Modal, ActivityIndicator } from "react-native";
 import { View, Text } from "../components/Themed";
 import styles from "../styling/styles";
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
 import { Button } from "@rneui/themed";
 import FirstTimeScreen from "./FirstTimeScreen";
+import WelcomeBackScreen from "./WelcomeBackScreen";
 import UserLastedScreen from "./UserLastedScreen";
 import UserNotLastedScreen from "./UserNotLasted";
 
@@ -17,6 +18,7 @@ export default function TimerScreen() {
   const [lastedTime, setLastedTime] = useState<number>();
   const [isTimerPlaying, setIsTimerPlaying] = useState<boolean>(false);
   const [showFirstTimeModal, setShowFirstTimeModal] = useState<boolean>(true);
+  const [showWelcomeBackModal, setShowWelcomeBackModal] = useState<boolean>(true);
   const [username, setUsername] = useState<string>("");
   const [buttonTitle, setButtonTitle] = useState<string>("Start");
   const [buttonDisabled, setButtonDisabled] = useState<boolean>(false);
@@ -26,6 +28,22 @@ export default function TimerScreen() {
   const [key, setKey] = useState(0);
   const [timerColorsTime, setTimerColorsTime] = useState<Array<number>>([]);
   const [lastedTimeGoal, setLastedTimeGoal] = useState<number>();
+  const [userIsNew, setUserIsNew] = useState<boolean>();
+
+  const checkIfUserIsNew = () => {
+    const dbRef = ref(getDatabase());
+    get(child(dbRef, `users/${username}`)).then((snapshot) => {
+      if (snapshot.exists()) // user is old
+      {
+        setUserIsNew(false);
+        setDuration(snapshot.val().lastedTimeGoal);
+      } else // user is new
+      {
+        setUserIsNew(true);
+        setDuration(34201)
+      }
+    })
+  }
 
   const saveLastedTimeGoal = () => {
     if (username && lastedTimeGoal) {
@@ -38,13 +56,12 @@ export default function TimerScreen() {
 
   const getLastedTimeGoal = () => {
     const dbRef = ref(getDatabase());
-    
-    if(lastedTimeGoal == undefined)
-    {
+
+    if (lastedTimeGoal == undefined) {
       get(child(dbRef, `users/${username}`)).then((snapshot) => {
         if (snapshot.exists()) {
           setLastedTimeGoal(snapshot.val().lastedTimeGoal);
-        } else if(lastedTime) {
+        } else if (lastedTime) {
           setLastedTimeGoal(lastedTime + 10);
           saveLastedTimeGoal();
         }
@@ -54,8 +71,6 @@ export default function TimerScreen() {
       get(child(dbRef, `users/${username}`)).then((snapshot) => {
         if (snapshot.exists()) {
           setLastedTimeGoal(snapshot.val().lastedTimeGoal);
-        } else {
-          console.log("No data available");
         }
       })
     }
@@ -106,22 +121,26 @@ export default function TimerScreen() {
 
 
   const calculateLastedTime = () => {
-    if (remainingTime) {
+    if (remainingTime && duration) {
       let timeLasted = duration - remainingTime;
       setLastedTime(timeLasted);
     }
   };
 
   const calculateTimerColorsTime = () => {
-    setTimerColorsTime([duration, duration * 0.7, duration * 0.5, 0]);
+    if (duration)
+      setTimerColorsTime([duration, duration * 0.7, duration * 0.5, 0]);
   };
+
+  useEffect(() => {
+    checkIfUserIsNew();
+  }, [showWelcomeBackModal == true])
 
   useEffect(() => {
     calculateTimerColorsTime();
   }, [duration]);
 
   useEffect(() => {
-
     const auth = getAuth();
     const user = auth.currentUser;
 
@@ -139,9 +158,7 @@ export default function TimerScreen() {
       if (buttonTitle == "I couldn't last longer") // timer stopped by user
       {
         saveLastedTimeGoal();
-        setTimeout(() => {
-          setShowUserNotLastedModal(true);
-        }, 500);
+        setShowUserNotLastedModal(true);
 
       } else // timer ran out
       {
@@ -152,10 +169,9 @@ export default function TimerScreen() {
 
   return (
     <View style={styles.container}>
-      <Text>TODO: ce je stari user, settaj duration na njegov timelastedgoal</Text>
       <Text style={styles.alreadyOrNotRegisteredText}>Hello, {username}</Text>
       <Text></Text>
-      {!lastedTimeGoal && <Modal
+      {userIsNew && <Modal
         animationType="slide"
         transparent={false}
         visible={showFirstTimeModal}
@@ -163,6 +179,18 @@ export default function TimerScreen() {
         <FirstTimeScreen
           closeModal={() => {
             setShowFirstTimeModal(false);
+          }}
+        />
+      </Modal>}
+      {!userIsNew && <Modal
+        animationType="slide"
+        transparent={false}
+        visible={showWelcomeBackModal}
+      >
+        <WelcomeBackScreen
+          username={username}
+          closeModal={() => {
+            setShowWelcomeBackModal(false);
           }}
         />
       </Modal>}
@@ -203,6 +231,9 @@ export default function TimerScreen() {
         />
       </Modal>
       <View style={styles.timerContainer}>
+      {isNaN(duration) ? (
+        <ActivityIndicator size="large" color="#5c5470" />
+      ) : (
         <CountdownCircleTimer
           key={key}
           isPlaying={isTimerPlaying}
@@ -224,7 +255,7 @@ export default function TimerScreen() {
           {({ remainingTime }) => (
             <Text style={styles.timerText}>{remainingTime}</Text>
           )}
-        </CountdownCircleTimer>
+        </CountdownCircleTimer> )}
       </View>
       <Button
         titleStyle={styles.buttonTitle}
