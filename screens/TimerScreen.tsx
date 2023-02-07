@@ -29,16 +29,19 @@ export default function TimerScreen() {
   const [timerColorsTime, setTimerColorsTime] = useState<Array<number>>([]);
   const [lastedTimeGoal, setLastedTimeGoal] = useState<number>();
   const [userIsNew, setUserIsNew] = useState<boolean>();
+  const [userIsOld, setUserIsOld] = useState<boolean>();
 
   const checkIfUserIsNew = () => {
     const dbRef = ref(getDatabase());
     get(child(dbRef, `users/${username}`)).then((snapshot) => {
-      if (snapshot.exists()) // user is old
+      if (snapshot.val() !== null) // user is old
       {
-        setUserIsNew(false);
+        console.log("user is old")
+        setUserIsOld(true);
         setDuration(snapshot.val().lastedTimeGoal);
       } else // user is new
       {
+        console.log("user is new")
         setUserIsNew(true);
         setDuration(34201)
       }
@@ -182,7 +185,7 @@ export default function TimerScreen() {
           }}
         />
       </Modal>}
-      {!userIsNew && <Modal
+      {userIsOld && <Modal
         animationType="slide"
         transparent={false}
         visible={showWelcomeBackModal}

@@ -34,6 +34,7 @@ export default function LoginScreen({ navigation }: any) {
           const errorCode = error.code;
           console.log(errorCode);
           const errorMessage = error.message;
+          alert(errorCode)
           console.log(errorMessage);
         });
     }
