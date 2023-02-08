@@ -24,9 +24,9 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator screenOptions={{ headerShown: false, gestureEnabled: false }}>
       <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Timer" component={TimerScreen} options={{ gestureEnabled: false}} />
+      <Stack.Screen name="Timer" component={TimerScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
     </Stack.Navigator>
   );

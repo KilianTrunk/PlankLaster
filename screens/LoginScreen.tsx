@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, Image } from "react-native";
-import styles from "../styling/styles";
+import styles from "../styling/LoginScreenStyles";
 
 import { Input } from "@rneui/base";
 import { Button, Icon } from "@rneui/themed";
@@ -39,7 +39,7 @@ export default function LoginScreen({ navigation }: any) {
         });
     }
   };
-  
+
   return (
     <View style={styles.container}>
       <View style={styles.inputContainer}>
@@ -93,7 +93,7 @@ export default function LoginScreen({ navigation }: any) {
         Login
       </Button>
       <Text
-        style={styles.alreadyOrNotRegisteredText}
+        style={styles.notRegisteredText}
         onPress={() => navigation.navigate("Register")}
       >
         Not registered yet? Register

@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import { View, Text } from "react-native";
-import styles from "../styling/styles";
+import styles from "../styling/RegisterScreenStyles";
 
 import { Input } from "@rneui/base";
 import { Button, Icon } from "@rneui/themed";
 
 import { getAuth, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-
 
 import "../types";
 
@@ -29,7 +28,7 @@ export default function RegisterScreen({ navigation }: any) {
         .then((userCredential) => {
           // Signed in 
           const user = userCredential.user;
-          
+
           if (auth.currentUser) {
             updateProfile(auth.currentUser, {
               displayName: username
@@ -117,7 +116,7 @@ export default function RegisterScreen({ navigation }: any) {
         Register
       </Button>
       <Text
-        style={styles.alreadyOrNotRegisteredText}
+        style={styles.alreadyRegisteredText}
         onPress={() => navigation.navigate("Login")}
       >
         Already registered? Login

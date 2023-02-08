@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text } from "react-native";
 import { Button } from "@rneui/themed";
-import styles from "../styling/styles";
+import styles from "../styling/FirstTimeScreenStyles";
 
 interface FirstTimeScreenProps {
   closeModal: () => void;
@@ -10,12 +10,12 @@ interface FirstTimeScreenProps {
 export default function FirstTimeScreen(props: FirstTimeScreenProps) {
   return (
     <View style={styles.container}>
-      <Text style={styles.alreadyOrNotRegisteredText}>
+      <Text style={styles.firstTimeText}>
         For starters, lets try to break the world record lasting in the plank
         position as long as the current world record holder Daniel Scali did - 9 hours, 30 minutes and 1 second (This way we will be able to identicate your current longest lasting
         plank and set the longest lasting plank goal)
       </Text>
-      <Text style={styles.alreadyOrNotRegisteredText}>
+      <Text style={styles.firstTimeText}>
         Note : when you can't last longer, make sure to press on the "I couldn't
         last longer" button
       </Text>

@@ -1,7 +1,9 @@
 import React from "react";
 import { View, Text, Image } from "react-native";
 import { Button } from "@rneui/themed";
-import styles from "../styling/styles";
+import styles from "../styling/WelcomeBackScreenStyles";
+
+const logo = require('../images/logo.png');
 
 interface WelcomeBackScreenProps {
     closeModal: () => void;
@@ -11,10 +13,10 @@ interface WelcomeBackScreenProps {
 export default function WelcomeBackScreen(props: WelcomeBackScreenProps) {
     return (
         <View style={styles.container}>
-            <Text style={styles.alreadyOrNotRegisteredText}>
-                welcome back, {props.username}!
+            <Image source={logo} style={styles.logo} />
+            <Text style={styles.welcomeBackText}>
+                Welcome back, {props.username}! Are you ready to make your abdominal muscles burn and try to beat your plank lasting time goal?
             </Text>
-            <Text></Text>
             <Button
                 titleStyle={styles.buttonTitle}
                 buttonStyle={styles.button}
@@ -27,7 +29,7 @@ export default function WelcomeBackScreen(props: WelcomeBackScreenProps) {
                 iconRight
                 onPress={() => props.closeModal()}
             >
-                Lets go!
+                I'm ready!
             </Button>
         </View>
     );

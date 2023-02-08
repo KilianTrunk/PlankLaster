@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { Modal, ActivityIndicator, TouchableOpacity } from "react-native";
 import { View, Text } from "../components/Themed";
-import styles from "../styling/styles";
+import styles from "../styling/TimerScreenStyles";
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
 import { Button, Icon } from "@rneui/themed";
 import FirstTimeScreen from "./FirstTimeScreen";
 import WelcomeBackScreen from "./WelcomeBackScreen";
 import UserLastedScreen from "./UserLastedScreen";
-import UserNotLastedScreen from "./UserNotLasted";
+import UserNotLastedScreen from "./UserNotLastedScreen";
 import ProfileScreen from "./ProfileScreen";
 
 import { getAuth } from "firebase/auth";
 import { getDatabase, ref, update, get, child } from "firebase/database";
 
-export default function TimerScreen({navigation}: any) {
+export default function TimerScreen({ navigation }: any) {
   const [duration, setDuration] = useState<number>(34201);
   const [remainingTime, setRemainingTime] = useState<number>();
   const [lastedTime, setLastedTime] = useState<number>();
@@ -132,7 +132,7 @@ export default function TimerScreen({navigation}: any) {
 
   const calculateTimerColorsTime = () => {
     if (duration)
-      setTimerColorsTime([duration, duration * 0.7, duration * 0.5, 0]);
+      setTimerColorsTime([duration, duration * 0.7, duration * 0.4, 0]);
   };
 
   useEffect(() => {
@@ -178,22 +178,24 @@ export default function TimerScreen({navigation}: any) {
         visible={showProfileModal}
       >
         <ProfileScreen
-        navigation={navigation}
+          username={username}
+          longestLastingPlankGoal={duration}
+          navigation={navigation}
           closeModal={() => {
             setShowProfileModal(false);
-            
+
           }}
         />
       </Modal>
-      <Button
-        titleStyle={styles.buttonTitle}
-        buttonStyle={styles.button}
-        onPress={() => setShowProfileModal(true)}
-      >
-        <Icon type="font-awesome" name="user" color="#2a2438" />{username}
-      </Button>
-      <Text style={styles.alreadyOrNotRegisteredText}>Hello, {username}</Text>
-      <Text></Text>
+      <View style={styles.profileContainer}>
+        <Button
+          titleStyle={styles.buttonTitle}
+          buttonStyle={styles.button}
+          onPress={() => setShowProfileModal(true)}
+        >
+          <Icon type="font-awesome" name="user" color="#2a2438" />
+        </Button>
+      </View>
       {duration === 34201 && userIsNew ? (
         <Modal
           animationType="slide"
@@ -255,6 +257,7 @@ export default function TimerScreen({navigation}: any) {
             setButtonIcon("play");
           }}
           longestLastingPlankGoal={lastedTimeGoal}
+          lastedPlankTime={lastedTime}
         />
       </Modal>
       <View style={styles.timerContainer}>

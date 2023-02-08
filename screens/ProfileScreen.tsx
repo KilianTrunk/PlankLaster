@@ -1,33 +1,38 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import React from "react";
+import { View, Text, TouchableOpacity, Image } from "react-native";
 import { Button } from "@rneui/themed";
-import styles from "../styling/styles";
+import styles from "../styling/ProfileScreenStyles";
 
 import { getAuth, signOut } from "firebase/auth";
 
+const logo = require('../images/logo.png');
+
 interface ProfileScreenProps {
+    username: string;
+    longestLastingPlankGoal?: number;
     navigation: any;
     closeModal: () => void;
 }
 
 export default function ProfileScreen({ navigation, ...props }: ProfileScreenProps) {
+
     const signUserOut = () => {
         const auth = getAuth();
         signOut(auth).then(() => {
             props.closeModal();
             navigation.navigate("Login");
         })
-
     }
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity onPress={signUserOut}>
-                <Text style={styles.alreadyOrNotRegisteredText}>
-                    Sign out
-                </Text>
-                <Text></Text>
-            </TouchableOpacity>
+            <Image source={logo} style={styles.logo} />
+            <Text style={styles.userData}>
+                Username : {props.username}
+            </Text>
+            <Text style={styles.userData}>
+                Plank lasting time goal : {props.longestLastingPlankGoal} seconds
+            </Text>
             <Button
                 titleStyle={styles.buttonTitle}
                 buttonStyle={styles.button}
@@ -42,6 +47,11 @@ export default function ProfileScreen({ navigation, ...props }: ProfileScreenPro
             >
                 Go back
             </Button>
+            <TouchableOpacity onPress={signUserOut}>
+                <Text style={styles.signOutText}>
+                    Sign out
+                </Text>
+            </TouchableOpacity>
         </View>
     );
 }
