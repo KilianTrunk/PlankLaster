@@ -13,7 +13,7 @@ export default function FirstTimeScreen(props: FirstTimeScreenProps) {
       <Text style={styles.alreadyOrNotRegisteredText}>
         For starters, lets try to break the world record lasting in the plank
         position as long as the current world record holder Daniel Scali did - 9 hours, 30 minutes and 1 second (This way we will be able to identicate your current longest lasting
-        plank)
+        plank and set the longest lasting plank goal)
       </Text>
       <Text style={styles.alreadyOrNotRegisteredText}>
         Note : when you can't last longer, make sure to press on the "I couldn't

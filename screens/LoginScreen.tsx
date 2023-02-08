@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { View, Text } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, Text, Image } from "react-native";
 import styles from "../styling/styles";
 
 import { Input } from "@rneui/base";
@@ -28,7 +28,7 @@ export default function LoginScreen({ navigation }: any) {
           // Signed in 
           const user = userCredential.user;
           // ...
-          navigation.navigate('Timer')
+          navigation.navigate('Timer');
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -39,7 +39,7 @@ export default function LoginScreen({ navigation }: any) {
         });
     }
   };
-
+  
   return (
     <View style={styles.container}>
       <View style={styles.inputContainer}>

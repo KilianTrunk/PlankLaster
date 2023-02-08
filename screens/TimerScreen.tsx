@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { Modal, ActivityIndicator } from "react-native";
+import { Modal, ActivityIndicator, TouchableOpacity } from "react-native";
 import { View, Text } from "../components/Themed";
 import styles from "../styling/styles";
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
-import { Button } from "@rneui/themed";
+import { Button, Icon } from "@rneui/themed";
 import FirstTimeScreen from "./FirstTimeScreen";
 import WelcomeBackScreen from "./WelcomeBackScreen";
 import UserLastedScreen from "./UserLastedScreen";
 import UserNotLastedScreen from "./UserNotLasted";
+import ProfileScreen from "./ProfileScreen";
 
 import { getAuth } from "firebase/auth";
 import { getDatabase, ref, update, get, child } from "firebase/database";
 
-export default function TimerScreen() {
+export default function TimerScreen({navigation}: any) {
   const [duration, setDuration] = useState<number>(34201);
   const [remainingTime, setRemainingTime] = useState<number>();
   const [lastedTime, setLastedTime] = useState<number>();
@@ -29,19 +30,18 @@ export default function TimerScreen() {
   const [timerColorsTime, setTimerColorsTime] = useState<Array<number>>([]);
   const [lastedTimeGoal, setLastedTimeGoal] = useState<number>();
   const [userIsNew, setUserIsNew] = useState<boolean>();
-  const [userIsOld, setUserIsOld] = useState<boolean>();
+  const [firstTimeModalShown, setFirstTimeModalShown] = useState<boolean>();
+  const [showProfileModal, setShowProfileModal] = useState<boolean>(false);
 
   const checkIfUserIsNew = () => {
     const dbRef = ref(getDatabase());
     get(child(dbRef, `users/${username}`)).then((snapshot) => {
-      if (snapshot.val() !== null) // user is old
+      if (snapshot.val() !== null && snapshot.val().lastedTimeGoal !== undefined) // user is old
       {
-        console.log("user is old")
-        setUserIsOld(true);
+        setUserIsNew(false);
         setDuration(snapshot.val().lastedTimeGoal);
-      } else // user is new
+      } else if (snapshot.val()) // user is new
       {
-        console.log("user is new")
         setUserIsNew(true);
         setDuration(34201)
       }
@@ -137,7 +137,7 @@ export default function TimerScreen() {
 
   useEffect(() => {
     checkIfUserIsNew();
-  }, [showWelcomeBackModal == true])
+  }, [userIsNew])
 
   useEffect(() => {
     calculateTimerColorsTime();
@@ -172,31 +172,55 @@ export default function TimerScreen() {
 
   return (
     <View style={styles.container}>
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={showProfileModal}
+      >
+        <ProfileScreen
+        navigation={navigation}
+          closeModal={() => {
+            setShowProfileModal(false);
+            
+          }}
+        />
+      </Modal>
+      <Button
+        titleStyle={styles.buttonTitle}
+        buttonStyle={styles.button}
+        onPress={() => setShowProfileModal(true)}
+      >
+        <Icon type="font-awesome" name="user" color="#2a2438" />{username}
+      </Button>
       <Text style={styles.alreadyOrNotRegisteredText}>Hello, {username}</Text>
       <Text></Text>
-      {userIsNew && <Modal
-        animationType="slide"
-        transparent={false}
-        visible={showFirstTimeModal}
-      >
-        <FirstTimeScreen
-          closeModal={() => {
-            setShowFirstTimeModal(false);
-          }}
-        />
-      </Modal>}
-      {userIsOld && <Modal
-        animationType="slide"
-        transparent={false}
-        visible={showWelcomeBackModal}
-      >
-        <WelcomeBackScreen
-          username={username}
-          closeModal={() => {
-            setShowWelcomeBackModal(false);
-          }}
-        />
-      </Modal>}
+      {duration === 34201 && userIsNew ? (
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={showFirstTimeModal}
+        >
+          <FirstTimeScreen
+            closeModal={() => {
+              setShowFirstTimeModal(false);
+              setFirstTimeModalShown(true);
+            }}
+          />
+        </Modal>
+      ) : !firstTimeModalShown ? (
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={showWelcomeBackModal}
+        >
+          <WelcomeBackScreen
+            username={username}
+            closeModal={() => {
+              setShowWelcomeBackModal(false);
+            }}
+          />
+        </Modal>
+      ) : null}
       <Modal
         animationType="slide"
         transparent={false}
@@ -234,31 +258,31 @@ export default function TimerScreen() {
         />
       </Modal>
       <View style={styles.timerContainer}>
-      {isNaN(duration) ? (
-        <ActivityIndicator size="large" color="#5c5470" />
-      ) : (
-        <CountdownCircleTimer
-          key={key}
-          isPlaying={isTimerPlaying}
-          strokeLinecap={"butt"}
-          duration={duration}
-          colors={["#5c5470", "#5c5470", "#A30000", "#A30000"]}
-          colorsTime={[timerColorsTime[0], timerColorsTime[1], timerColorsTime[2], timerColorsTime[3]]}
-          onUpdate={handleUpdate}
-          onComplete={() => {
-            setLastedTime(duration);
-            increaseLastedTimeGoal();
-            saveLastedTimeGoal();
-            setButtonDisabled(true);
-            saveLastedTime();
-            setButtonTitle("Congratulations!");
-            setButtonIcon("emoticon-happy");
-          }}
-        >
-          {({ remainingTime }) => (
-            <Text style={styles.timerText}>{remainingTime}</Text>
-          )}
-        </CountdownCircleTimer> )}
+        {isNaN(duration) ? (
+          <ActivityIndicator size="large" color="#5c5470" />
+        ) : (
+          <CountdownCircleTimer
+            key={key}
+            isPlaying={isTimerPlaying}
+            strokeLinecap={"butt"}
+            duration={duration}
+            colors={["#5c5470", "#5c5470", "#A30000", "#A30000"]}
+            colorsTime={[timerColorsTime[0], timerColorsTime[1], timerColorsTime[2], timerColorsTime[3]]}
+            onUpdate={handleUpdate}
+            onComplete={() => {
+              setLastedTime(duration);
+              increaseLastedTimeGoal();
+              saveLastedTimeGoal();
+              setButtonDisabled(true);
+              saveLastedTime();
+              setButtonTitle("Congratulations!");
+              setButtonIcon("emoticon-happy");
+            }}
+          >
+            {({ remainingTime }) => (
+              <Text style={styles.timerText}>{remainingTime}</Text>
+            )}
+          </CountdownCircleTimer>)}
       </View>
       <Button
         titleStyle={styles.buttonTitle}

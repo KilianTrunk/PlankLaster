@@ -34,9 +34,6 @@ export default function RegisterScreen({ navigation }: any) {
             updateProfile(auth.currentUser, {
               displayName: username
             })
-              .then(() => {
-                console.log("User's display name was set successfully!")
-              })
               .catch((error) => {
                 console.log(error.message);
               });
@@ -48,6 +45,7 @@ export default function RegisterScreen({ navigation }: any) {
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
+          alert(errorCode);
           // ..
         });
     }

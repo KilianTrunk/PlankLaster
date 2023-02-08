@@ -53,5 +53,11 @@ export default StyleSheet.create({
 
   timerContainer: {
     paddingBottom: "6%",
-  }
+  },
+
+  iconContainer: {
+    position: 'absolute',
+    top: "8%",
+    right: "8%",
+  },
 });
