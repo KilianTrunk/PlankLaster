@@ -1,9 +1,10 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getDatabase } from "firebase/database";
+import { API_KEY } from "@env";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAB5dOXuUro2scyclSAgnsQGukPPKGXnag",
+  apiKey: API_KEY,
   authDomain: "planklaster-82dfd.firebaseapp.com",
   databaseURL:
     "https://planklaster-82dfd-default-rtdb.europe-west1.firebasedatabase.app",
@@ -18,4 +19,4 @@ const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 const auth = getAuth(app);
 
-export {database, auth};
+export { database, auth };
