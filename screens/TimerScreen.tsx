@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Modal, ActivityIndicator, TouchableOpacity } from "react-native";
-import { View, Text } from "../components/Themed";
+import {
+  Modal,
+  ActivityIndicator,
+  TouchableOpacity,
+  View,
+  Text,
+} from "react-native";
 import styles from "../styling/TimerScreenStyles";
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
 import { Button, Icon } from "@rneui/themed";
@@ -19,13 +24,16 @@ export default function TimerScreen({ navigation }: any) {
   const [lastedTime, setLastedTime] = useState<number>();
   const [isTimerPlaying, setIsTimerPlaying] = useState<boolean>(false);
   const [showFirstTimeModal, setShowFirstTimeModal] = useState<boolean>(true);
-  const [showWelcomeBackModal, setShowWelcomeBackModal] = useState<boolean>(true);
+  const [showWelcomeBackModal, setShowWelcomeBackModal] =
+    useState<boolean>(true);
   const [username, setUsername] = useState<string>("");
   const [buttonTitle, setButtonTitle] = useState<string>("Start");
   const [buttonDisabled, setButtonDisabled] = useState<boolean>(false);
   const [buttonIcon, setButtonIcon] = useState<string>("play");
-  const [showUserLastedModal, setShowUserLastedModal] = useState<boolean>(false);
-  const [showUserNotLastedModal, setShowUserNotLastedModal] = useState<boolean>(false);
+  const [showUserLastedModal, setShowUserLastedModal] =
+    useState<boolean>(false);
+  const [showUserNotLastedModal, setShowUserNotLastedModal] =
+    useState<boolean>(false);
   const [key, setKey] = useState(0);
   const [timerColorsTime, setTimerColorsTime] = useState<Array<number>>([]);
   const [lastedTimeGoal, setLastedTimeGoal] = useState<number>();
@@ -36,26 +44,29 @@ export default function TimerScreen({ navigation }: any) {
   const checkIfUserIsNew = () => {
     const dbRef = ref(getDatabase());
     get(child(dbRef, `users/${username}`)).then((snapshot) => {
-      if (snapshot.val() !== null && snapshot.val().lastedTimeGoal !== undefined) // user is old
-      {
+      if (
+        snapshot.val() !== null &&
+        snapshot.val().lastedTimeGoal !== undefined
+      ) {
+        // user is old
         setUserIsNew(false);
         setDuration(snapshot.val().lastedTimeGoal);
-      } else if (snapshot.val()) // user is new
-      {
+      } else if (snapshot.val()) {
+        // user is new
         setUserIsNew(true);
-        setDuration(34201)
+        setDuration(34201);
       }
-    })
-  }
+    });
+  };
 
   const saveLastedTimeGoal = () => {
     if (username && lastedTimeGoal) {
       const db = getDatabase();
       update(ref(db, `users/${username}`), {
-        lastedTimeGoal
+        lastedTimeGoal,
       });
     }
-  }
+  };
 
   const getLastedTimeGoal = () => {
     const dbRef = ref(getDatabase());
@@ -68,14 +79,14 @@ export default function TimerScreen({ navigation }: any) {
           setLastedTimeGoal(lastedTime + 10);
           saveLastedTimeGoal();
         }
-      })
+      });
     } else {
       saveLastedTimeGoal();
       get(child(dbRef, `users/${username}`)).then((snapshot) => {
         if (snapshot.exists()) {
           setLastedTimeGoal(snapshot.val().lastedTimeGoal);
         }
-      })
+      });
     }
   };
 
@@ -86,13 +97,13 @@ export default function TimerScreen({ navigation }: any) {
       setButtonTitle("I couldn't last longer");
       setButtonIcon("emoticon-sad");
     }
-  }
+  };
 
   const increaseLastedTimeGoal = () => {
     if (lastedTimeGoal) {
       setLastedTimeGoal(lastedTimeGoal + 10);
     }
-  }
+  };
 
   const onPressPause = () => {
     calculateLastedTime();
@@ -108,7 +119,7 @@ export default function TimerScreen({ navigation }: any) {
     if (username && lastedTime) {
       const db = getDatabase();
       update(ref(db, `users/${username}`), {
-        lastedTime
+        lastedTime,
       });
     }
   };
@@ -119,9 +130,8 @@ export default function TimerScreen({ navigation }: any) {
       if (snapshot.exists()) {
         setLastedTime(snapshot.val().lastedTime);
       }
-    })
-  }
-
+    });
+  };
 
   const calculateLastedTime = () => {
     if (remainingTime && duration) {
@@ -137,7 +147,7 @@ export default function TimerScreen({ navigation }: any) {
 
   useEffect(() => {
     checkIfUserIsNew();
-  }, [userIsNew])
+  }, [userIsNew]);
 
   useEffect(() => {
     calculateTimerColorsTime();
@@ -153,18 +163,16 @@ export default function TimerScreen({ navigation }: any) {
   }, []);
 
   useEffect(() => {
-
     getLastedTimeGoal();
     saveLastedTime();
 
     if (buttonDisabled == true) {
-      if (buttonTitle == "I couldn't last longer") // timer stopped by user
-      {
+      if (buttonTitle == "I couldn't last longer") {
+        // timer stopped by user
         saveLastedTimeGoal();
         setShowUserNotLastedModal(true);
-
-      } else // timer ran out
-      {
+      } // timer ran out
+      else {
         setShowUserLastedModal(true);
       }
     }
@@ -183,7 +191,6 @@ export default function TimerScreen({ navigation }: any) {
           navigation={navigation}
           closeModal={() => {
             setShowProfileModal(false);
-
           }}
         />
       </Modal>
@@ -232,9 +239,8 @@ export default function TimerScreen({ navigation }: any) {
           closeModal={() => {
             setShowUserLastedModal(false);
             setIsTimerPlaying(false);
-            setKey(prevKey => prevKey + 10);
-            if (lastedTimeGoal != undefined)
-              setDuration(lastedTimeGoal);
+            setKey((prevKey) => prevKey + 10);
+            if (lastedTimeGoal != undefined) setDuration(lastedTimeGoal);
             setButtonTitle("Start");
             setButtonIcon("play");
             setButtonDisabled(false);
@@ -250,9 +256,8 @@ export default function TimerScreen({ navigation }: any) {
           closeModal={() => {
             setShowUserNotLastedModal(false);
             setButtonDisabled(false);
-            setKey(prevKey => prevKey + 10);
-            if (lastedTimeGoal != undefined)
-              setDuration(lastedTimeGoal);
+            setKey((prevKey) => prevKey + 10);
+            if (lastedTimeGoal != undefined) setDuration(lastedTimeGoal);
             setButtonTitle("Start");
             setButtonIcon("play");
           }}
@@ -270,7 +275,12 @@ export default function TimerScreen({ navigation }: any) {
             strokeLinecap={"butt"}
             duration={duration}
             colors={["#5c5470", "#5c5470", "#A30000", "#A30000"]}
-            colorsTime={[timerColorsTime[0], timerColorsTime[1], timerColorsTime[2], timerColorsTime[3]]}
+            colorsTime={[
+              timerColorsTime[0],
+              timerColorsTime[1],
+              timerColorsTime[2],
+              timerColorsTime[3],
+            ]}
             onUpdate={handleUpdate}
             onComplete={() => {
               setLastedTime(duration);
@@ -285,7 +295,8 @@ export default function TimerScreen({ navigation }: any) {
             {({ remainingTime }) => (
               <Text style={styles.timerText}>{remainingTime}</Text>
             )}
-          </CountdownCircleTimer>)}
+          </CountdownCircleTimer>
+        )}
       </View>
       <Button
         titleStyle={styles.buttonTitle}
@@ -307,4 +318,3 @@ export default function TimerScreen({ navigation }: any) {
     </View>
   );
 }
-

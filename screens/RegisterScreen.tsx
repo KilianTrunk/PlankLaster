@@ -7,6 +7,8 @@ import { Button, Icon } from "@rneui/themed";
 
 import { getAuth, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 
+import AuthText from "../components/AuthText";
+
 import "../types";
 
 export default function RegisterScreen({ navigation }: any) {
@@ -115,12 +117,10 @@ export default function RegisterScreen({ navigation }: any) {
       >
         Register
       </Button>
-      <Text
-        style={styles.alreadyRegisteredText}
+      <AuthText
+        message="Already registered? Login"
         onPress={() => navigation.navigate("Login")}
-      >
-        Already registered? Login
-      </Text>
+      ></AuthText>
     </View>
   );
 }

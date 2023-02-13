@@ -8,6 +8,8 @@ import { Button, Icon } from "@rneui/themed";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../database/firebase";
 
+import AuthText from "../components/AuthText";
+
 import "../types";
 
 export default function LoginScreen({ navigation }: any) {
@@ -92,12 +94,10 @@ export default function LoginScreen({ navigation }: any) {
       >
         Login
       </Button>
-      <Text
-        style={styles.notRegisteredText}
+      <AuthText
+        message="Not registered yet? Register"
         onPress={() => navigation.navigate("Register")}
-      >
-        Not registered yet? Register
-      </Text>
+      ></AuthText>
     </View>
   );
 }
