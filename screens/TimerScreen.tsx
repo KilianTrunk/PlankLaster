@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import {
   Modal,
   ActivityIndicator,
-  TouchableOpacity,
   View,
   Text,
 } from "react-native";
