@@ -33,6 +33,6 @@ export default StyleSheet.create({
   logo: {
     width: 150,
     height: 150,
-    marginBottom: "3%",
+    marginBottom: "1%",
   }
 });

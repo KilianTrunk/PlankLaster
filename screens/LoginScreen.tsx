@@ -1,10 +1,7 @@
 import React, { useState } from "react";
-import { View } from "react-native";
-import styles from "../styling/LoginScreenStyles";
-
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../database/firebase";
-
+import Container from "../components/Container";
 import EmailInput from "../components/EmailInput";
 import PasswordInput from "../components/PasswordInput";
 import AuthButton from "../components/AuthButton";
@@ -12,7 +9,7 @@ import AuthText from "../components/AuthText";
 
 import "../types";
 
-export default function LoginScreen({ navigation }: any) {
+const LoginScreen = ({ navigation }: any) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [secureTextEntry, setSecureTextEntry] = useState(true);
@@ -27,10 +24,10 @@ export default function LoginScreen({ navigation }: any) {
     } else {
       signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-          // Signed in 
+          // Signed in
           const user = userCredential.user;
           // ...
-          navigation.navigate('Timer');
+          navigation.navigate("Timer");
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -40,25 +37,21 @@ export default function LoginScreen({ navigation }: any) {
   };
 
   return (
-    <View style={styles.container}>
-      <EmailInput
-        onChangeText={setEmail}
-        value={email}
-      />
+    <Container>
+      <EmailInput onChangeText={setEmail} value={email} />
       <PasswordInput
         onChangeText={setPassword}
         value={password}
         secureTextEntry={secureTextEntry}
         onPress={() => handleRightIconClick()}
       />
-      <AuthButton
-        authType="Login"
-        onPress={userLogin}
-      />
+      <AuthButton authType="Login" onPress={userLogin} />
       <AuthText
         message="Not registered yet? Register"
         onPress={() => navigation.navigate("Register")}
       />
-    </View>
+    </Container>
   );
-}
+};
+
+export default LoginScreen;

@@ -6,7 +6,7 @@ export default StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#2a2438",
-    paddingTop: "60%"
+    paddingTop: "55%"
   },
 
   userData: {
@@ -20,7 +20,7 @@ export default StyleSheet.create({
     fontSize: 20,
     textAlign: "center",
     color: "#afa8bf",
-    marginTop: "50%",
+    marginTop: "60%",
   },
 
   button: {

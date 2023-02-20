@@ -1,7 +1,7 @@
 import React from "react";
-import { View, Text } from "react-native";
-import { Button } from "@rneui/themed";
-import styles from "../styling/UserNotLastedScreenStyles";
+import Container from "../components/Container";
+import AuthButton from "../components/AuthButton";
+import NormalText from "../components/NormalText";
 
 interface UserNotLastedScreenProps {
     closeModal: () => void;
@@ -9,29 +9,18 @@ interface UserNotLastedScreenProps {
     lastedPlankTime?: number;
 }
 
-export default function UserNotLastedScreen(props: UserNotLastedScreenProps) {
-    return (
-        <View style={styles.container}>
-            <Text style={styles.userInfoText}>
-                You have lasted for {props.lastedPlankTime} second(s).
-            </Text>
-            <Text style={styles.userInfoText}>
-                Your longest lasting plank goal is {props.longestLastingPlankGoal} seconds. Let's try to beat it!
-            </Text>
-            <Button
-                titleStyle={styles.buttonTitle}
-                buttonStyle={styles.button}
-                icon={{
-                    name: "arrow-right",
-                    type: "font-awesome",
-                    size: 16,
-                    color: "#2a2438",
-                }}
-                iconRight
-                onPress={() => props.closeModal()}
-            >
-                I'm ready!
-            </Button>
-        </View>
-    );
-}
+const UserNotLastedScreen = (props: UserNotLastedScreenProps) => {
+  return (
+    <Container paddingTop="14%">
+      <NormalText
+        text={`You have lasted for ${props.lastedPlankTime} second(s).`}
+      />
+      <NormalText
+        text={`Your longest lasting plank goal is ${props.longestLastingPlankGoal} seconds. Let's try to beat it!`}
+      />
+      <AuthButton authType="I'm ready!" onPress={props.closeModal} />
+    </Container>
+  );
+};
+
+export default UserNotLastedScreen;

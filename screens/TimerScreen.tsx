@@ -13,11 +13,11 @@ import WelcomeBackScreen from "./WelcomeBackScreen";
 import UserLastedScreen from "./UserLastedScreen";
 import UserNotLastedScreen from "./UserNotLastedScreen";
 import ProfileScreen from "./ProfileScreen";
-
+import Container from "../components/Container";
 import { getAuth } from "firebase/auth";
 import { getDatabase, ref, update, get, child } from "firebase/database";
 
-export default function TimerScreen({ navigation }: any) {
+const TimerScreen = ({ navigation }: any) => {
   const [duration, setDuration] = useState<number>(34201);
   const [remainingTime, setRemainingTime] = useState<number>();
   const [lastedTime, setLastedTime] = useState<number>();
@@ -50,7 +50,7 @@ export default function TimerScreen({ navigation }: any) {
         // user is old
         setUserIsNew(false);
         setDuration(snapshot.val().lastedTimeGoal);
-      } else if (snapshot.val()) {
+      } else {
         // user is new
         setUserIsNew(true);
         setDuration(34201);
@@ -99,8 +99,9 @@ export default function TimerScreen({ navigation }: any) {
   };
 
   const increaseLastedTimeGoal = () => {
-    if (lastedTimeGoal) {
-      setLastedTimeGoal(lastedTimeGoal + 10);
+    if (duration) {
+      setLastedTimeGoal(duration + 10);
+      saveLastedTimeGoal();
     }
   };
 
@@ -121,15 +122,6 @@ export default function TimerScreen({ navigation }: any) {
         lastedTime,
       });
     }
-  };
-
-  const getLastedTime = () => {
-    const dbRef = ref(getDatabase());
-    get(child(dbRef, `users/${username}`)).then((snapshot) => {
-      if (snapshot.exists()) {
-        setLastedTime(snapshot.val().lastedTime);
-      }
-    });
   };
 
   const calculateLastedTime = () => {
@@ -159,6 +151,8 @@ export default function TimerScreen({ navigation }: any) {
     if (user && user.displayName) {
       setUsername(user.displayName);
     }
+
+    checkIfUserIsNew();
   }, []);
 
   useEffect(() => {
@@ -178,7 +172,7 @@ export default function TimerScreen({ navigation }: any) {
   }, [buttonDisabled]);
 
   return (
-    <View style={styles.container}>
+    <Container paddingTop="6%">
       <Modal
         animationType="slide"
         transparent={false}
@@ -314,6 +308,8 @@ export default function TimerScreen({ navigation }: any) {
       >
         {buttonTitle}
       </Button>
-    </View>
+    </Container>
   );
-}
+};
+
+export default TimerScreen;

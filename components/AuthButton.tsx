@@ -7,24 +7,24 @@ interface Props {
     onPress: () => void;
 }
 
-export default function AuthButton(props: Props) {
-    return (
-        <Button
-            titleStyle={styles.buttonTitle}
-            buttonStyle={styles.button}
-            icon={{
-                name: "arrow-right",
-                type: "font-awesome",
-                size: 16,
-                color: "#2a2438",
-            }}
-            iconRight
-            onPress={() => props.onPress()}
-        >
-            {props.authType}
-        </Button>
-    );
-}
+const AuthButton = (props: Props) => {
+  return (
+    <Button
+      titleStyle={styles.buttonTitle}
+      buttonStyle={styles.button}
+      icon={{
+        name: "arrow-right",
+        type: "font-awesome",
+        size: 16,
+        color: "#2a2438",
+      }}
+      iconRight
+      onPress={() => props.onPress()}
+    >
+      {props.authType}
+    </Button>
+  );
+};
 
 const styles = StyleSheet.create({
     button: {
@@ -40,3 +40,5 @@ const styles = StyleSheet.create({
         fontSize: 18,
     },
 });
+
+export default AuthButton;

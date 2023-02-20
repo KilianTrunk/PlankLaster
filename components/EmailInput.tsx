@@ -8,25 +8,23 @@ interface Props {
     value: string;
 }
 
-export default function EmailInput(props: Props) {
-    return (
-        <View style={styles.inputContainer}>
-            <Input
-                placeholder="Email"
-                onChangeText={props.onChangeText}
-                value={props.value}
-                textContentType="emailAddress"
-                keyboardType="email-address"
-                autoCapitalize="none"
-                leftIcon={
-                    <Icon type="font-awesome" name="envelope" color="#afa8bf" />
-                }
-                leftIconContainerStyle={styles.inputLeftIcon}
-                inputStyle={styles.inputText}
-            />
-        </View>
-    );
-}
+const EmailInput = (props: Props) => {
+  return (
+    <View style={styles.inputContainer}>
+      <Input
+        placeholder="Email"
+        onChangeText={props.onChangeText}
+        value={props.value}
+        textContentType="emailAddress"
+        keyboardType="email-address"
+        autoCapitalize="none"
+        leftIcon={<Icon type="font-awesome" name="envelope" color="#afa8bf" />}
+        leftIconContainerStyle={styles.inputLeftIcon}
+        inputStyle={styles.inputText}
+      />
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
     inputContainer: {
@@ -39,3 +37,5 @@ const styles = StyleSheet.create({
         color: "#afa8bf",
     },
 });
+
+export default EmailInput;

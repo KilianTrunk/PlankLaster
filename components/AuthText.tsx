@@ -6,7 +6,7 @@ interface Props {
   onPress: () => void;
 }
 
-export default function AuthText(props: Props) {
+const AuthText = (props: Props) => {
   return (
     <TouchableOpacity onPress={props.onPress}>
       <View>
@@ -14,7 +14,7 @@ export default function AuthText(props: Props) {
       </View>
     </TouchableOpacity>
   );
-}
+};
 
 const styles = StyleSheet.create({
   message: {
@@ -25,3 +25,5 @@ const styles = StyleSheet.create({
     color: "#afa8bf",
   },
 });
+
+export default AuthText;

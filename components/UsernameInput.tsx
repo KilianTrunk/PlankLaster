@@ -8,23 +8,23 @@ interface Props {
     value: string;
 }
 
-export default function UsernameInput(props: Props) {
-    return (
-        <View style={styles.inputContainer}>
-            <Input
-                placeholder="Username"
-                onChangeText={props.onChangeText}
-                value={props.value}
-                textContentType="username"
-                keyboardType="default"
-                autoCapitalize="none"
-                leftIcon={<Icon type="font-awesome" name="user" color="#afa8bf" />}
-                leftIconContainerStyle={styles.inputLeftIconUser}
-                inputStyle={styles.inputText}
-            />
-        </View>
-    );
-}
+const UsernameInput = (props: Props) => {
+  return (
+    <View style={styles.inputContainer}>
+      <Input
+        placeholder="Username"
+        onChangeText={props.onChangeText}
+        value={props.value}
+        textContentType="username"
+        keyboardType="default"
+        autoCapitalize="none"
+        leftIcon={<Icon type="font-awesome" name="user" color="#afa8bf" />}
+        leftIconContainerStyle={styles.inputLeftIconUser}
+        inputStyle={styles.inputText}
+      />
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -46,3 +46,5 @@ const styles = StyleSheet.create({
         color: "#afa8bf",
     },
 });
+
+export default UsernameInput;
