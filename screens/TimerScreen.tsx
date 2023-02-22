@@ -14,6 +14,9 @@ import UserLastedScreen from "./UserLastedScreen";
 import UserNotLastedScreen from "./UserNotLastedScreen";
 import ProfileScreen from "./ProfileScreen";
 import Container from "../components/Container";
+import ModalScreen from "../components/ModalScreen";
+import TimerButton from "../components/TimerButton";
+import ProfileButton from "../components/ProfileButton";
 import { getAuth } from "firebase/auth";
 import { getDatabase, ref, update, get, child } from "firebase/database";
 
@@ -173,91 +176,71 @@ const TimerScreen = ({ navigation }: any) => {
 
   return (
     <Container paddingTop="6%">
-      <Modal
-        animationType="slide"
-        transparent={false}
+      <ModalScreen
         visible={showProfileModal}
-      >
-        <ProfileScreen
-          username={username}
-          longestLastingPlankGoal={duration}
-          navigation={navigation}
-          closeModal={() => {
-            setShowProfileModal(false);
-          }}
-        />
-      </Modal>
-      <View style={styles.profileContainer}>
-        <Button
-          titleStyle={styles.buttonTitle}
-          buttonStyle={styles.button}
-          onPress={() => setShowProfileModal(true)}
-        >
-          <Icon type="font-awesome" name="user" color="#2a2438" />
-        </Button>
-      </View>
+        closeModal={() => {
+          setShowProfileModal(false);
+        }}
+        component={ProfileScreen}
+        componentProps={{
+          username: username,
+          longestLastingPlankGoal: duration,
+          navigation: navigation,
+        }}
+      />
+      <ProfileButton
+        onPress={() => setShowProfileModal(true)}
+      />
       {duration === 34201 && userIsNew ? (
-        <Modal
-          animationType="slide"
-          transparent={false}
+        <ModalScreen
           visible={showFirstTimeModal}
-        >
-          <FirstTimeScreen
-            closeModal={() => {
-              setShowFirstTimeModal(false);
-              setFirstTimeModalShown(true);
-            }}
-          />
-        </Modal>
+          closeModal={() => {
+            setShowFirstTimeModal(false);
+            setFirstTimeModalShown(true);
+          }}
+          component={FirstTimeScreen}
+        />
       ) : !firstTimeModalShown ? (
-        <Modal
-          animationType="slide"
-          transparent={false}
+        <ModalScreen
           visible={showWelcomeBackModal}
-        >
-          <WelcomeBackScreen
-            username={username}
-            closeModal={() => {
-              setShowWelcomeBackModal(false);
-            }}
-          />
-        </Modal>
+          closeModal={() => {
+            setShowWelcomeBackModal(false);
+          }}
+          component={WelcomeBackScreen}
+          componentProps={{
+            username: username,
+          }}
+        />
       ) : null}
-      <Modal
-        animationType="slide"
-        transparent={false}
+      <ModalScreen
         visible={showUserLastedModal}
-      >
-        <UserLastedScreen
-          closeModal={() => {
-            setShowUserLastedModal(false);
-            setIsTimerPlaying(false);
-            setKey((prevKey) => prevKey + 10);
-            if (lastedTimeGoal != undefined) setDuration(lastedTimeGoal);
-            setButtonTitle("Start");
-            setButtonIcon("play");
-            setButtonDisabled(false);
-          }}
-        />
-      </Modal>
-      <Modal
-        animationType="slide"
-        transparent={false}
+        closeModal={() => {
+          setShowUserLastedModal(false);
+          setIsTimerPlaying(false);
+          setKey((prevKey) => prevKey + 10);
+          if (lastedTimeGoal != undefined) setDuration(lastedTimeGoal);
+          setButtonTitle("Start");
+          setButtonIcon("play");
+          setButtonDisabled(false);
+        }}
+        component={UserLastedScreen} // pass component type, not component instance
+      />
+      <ModalScreen
         visible={showUserNotLastedModal}
-      >
-        <UserNotLastedScreen
-          closeModal={() => {
-            setShowUserNotLastedModal(false);
-            setButtonDisabled(false);
-            setKey((prevKey) => prevKey + 10);
-            if (lastedTimeGoal != undefined) setDuration(lastedTimeGoal);
-            setButtonTitle("Start");
-            setButtonIcon("play");
-          }}
-          longestLastingPlankGoal={lastedTimeGoal}
-          lastedPlankTime={lastedTime}
-        />
-      </Modal>
+        closeModal={() => {
+          setShowUserNotLastedModal(false);
+          setButtonDisabled(false);
+          setKey((prevKey) => prevKey + 10);
+          if (lastedTimeGoal != undefined) setDuration(lastedTimeGoal);
+          setButtonTitle("Start");
+          setButtonIcon("play");
+        }}
+        component={UserNotLastedScreen}
+        componentProps={{
+          longestLastingPlankGoal: duration,
+          lastedPlankTime: lastedTime
+        }}
+      />
       <View style={styles.timerContainer}>
         {isNaN(duration) ? (
           <ActivityIndicator size="large" color="#5c5470" />
@@ -291,23 +274,19 @@ const TimerScreen = ({ navigation }: any) => {
           </CountdownCircleTimer>
         )}
       </View>
-      <Button
-        titleStyle={styles.buttonTitle}
-        buttonStyle={styles.button}
-        disabled={buttonDisabled}
+      <TimerButton
+        title={buttonTitle}
         icon={{
           name: buttonIcon,
           type: "material-community",
           size: 16,
           color: "#2a2438",
         }}
-        iconRight
         onPress={() => {
           onPressPause();
         }}
-      >
-        {buttonTitle}
-      </Button>
+        disabled={buttonDisabled}
+      />
     </Container>
   );
 };
