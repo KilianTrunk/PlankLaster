@@ -38,67 +38,53 @@ const TimerScreen = ({ navigation }: any) => {
   const checkIfUserIsNew = () => {
     const dbRef = ref(getDatabase());
     get(child(dbRef, `users/${username}`)).then((snapshot) => {
-      if (
-        snapshot.val() !== null &&
-        snapshot.val().lastedTimeGoal !== undefined
-      ) {
-        // user is old
-        setUserIsNew(false);
-        setDuration(snapshot.val().lastedTimeGoal);
-      } else {
-        // user is new
-        setUserIsNew(true);
-        setDuration(34201);
-      }
+      snapshot.val() !== null && snapshot.val().lastedTimeGoal !== undefined
+        ? (setUserIsNew(false), setDuration(snapshot.val().lastedTimeGoal))
+        : (setUserIsNew(true), setDuration(34201));
     });
   };
 
   const saveLastedTimeGoal = () => {
-    if (username && lastedTimeGoal) {
-      const db = getDatabase();
-      update(ref(db, `users/${username}`), {
+    username && lastedTimeGoal
+      ? update(ref(getDatabase(), `users/${username}`), {
         lastedTimeGoal,
-      });
-    }
+      })
+      : null;
   };
+
 
   const getLastedTimeGoal = () => {
     const dbRef = ref(getDatabase());
 
-    if (lastedTimeGoal == undefined) {
-      get(child(dbRef, `users/${username}`)).then((snapshot) => {
-        if (snapshot.exists()) {
-          setLastedTimeGoal(snapshot.val().lastedTimeGoal);
-        } else if (lastedTime) {
-          setLastedTimeGoal(lastedTime + 10);
-          saveLastedTimeGoal();
-        }
-      });
-    } else {
-      saveLastedTimeGoal();
-      get(child(dbRef, `users/${username}`)).then((snapshot) => {
-        if (snapshot.exists()) {
-          setLastedTimeGoal(snapshot.val().lastedTimeGoal);
-        }
-      });
-    }
+    lastedTimeGoal == undefined
+      ? get(child(dbRef, `users/${username}`)).then((snapshot) => {
+        snapshot.exists()
+          ? setLastedTimeGoal(snapshot.val().lastedTimeGoal)
+          : lastedTime
+            ? (setLastedTimeGoal(lastedTime + 10), saveLastedTimeGoal())
+            : null;
+      })
+      : (saveLastedTimeGoal(),
+        get(child(dbRef, `users/${username}`)).then((snapshot) => {
+          snapshot.exists()
+            ? setLastedTimeGoal(snapshot.val().lastedTimeGoal)
+            : null;
+        }));
   };
 
   const handleButtonTitle = () => {
-    if (buttonTitle == "I couldn't last longer") {
-      setButtonDisabled(true);
-    } else {
-      setButtonTitle("I couldn't last longer");
-      setButtonIcon("emoticon-sad");
-    }
+    buttonTitle == "I couldn't last longer"
+      ? setButtonDisabled(true)
+      : (setButtonTitle("I couldn't last longer"),
+        setButtonIcon("emoticon-sad"));
   };
 
   const increaseLastedTimeGoal = () => {
-    if (duration) {
-      setLastedTimeGoal(duration + 10);
-      saveLastedTimeGoal();
-    }
+    duration
+      ? (setLastedTimeGoal(duration + 10), saveLastedTimeGoal())
+      : null;
   };
+
 
   const onPressPause = () => {
     calculateLastedTime();
@@ -111,24 +97,19 @@ const TimerScreen = ({ navigation }: any) => {
   };
 
   const saveLastedTime = () => {
-    if (username && lastedTime) {
-      const db = getDatabase();
-      update(ref(db, `users/${username}`), {
-        lastedTime,
-      });
-    }
+    username && lastedTime
+      ? update(ref(getDatabase(), `users/${username}`), { lastedTime })
+      : null;
   };
 
   const calculateLastedTime = () => {
-    if (remainingTime && duration) {
-      let timeLasted = duration - remainingTime;
-      setLastedTime(timeLasted);
-    }
+    remainingTime && duration
+      ? setLastedTime(duration - remainingTime)
+      : null;
   };
 
   const calculateTimerColorsTime = () => {
-    if (duration)
-      setTimerColorsTime([duration, duration * 0.7, duration * 0.4, 0]);
+    duration ? setTimerColorsTime([duration, duration * 0.7, duration * 0.4, 0]) : null;
   };
 
   useEffect(() => {
@@ -143,9 +124,7 @@ const TimerScreen = ({ navigation }: any) => {
     const auth = getAuth();
     const user = auth.currentUser;
 
-    if (user && user.displayName) {
-      setUsername(user.displayName);
-    }
+    user && user.displayName ? setUsername(user.displayName) : null;
 
     checkIfUserIsNew();
   }, []);
@@ -154,16 +133,8 @@ const TimerScreen = ({ navigation }: any) => {
     getLastedTimeGoal();
     saveLastedTime();
 
-    if (buttonDisabled == true) {
-      if (buttonTitle == "I couldn't last longer") {
-        // timer stopped by user
-        saveLastedTimeGoal();
-        setShowUserNotLastedModal(true);
-      } // timer ran out
-      else {
-        setShowUserLastedModal(true);
-      }
-    }
+    buttonDisabled === true ? (buttonTitle === "I couldn't last longer" ? (saveLastedTimeGoal(), setShowUserNotLastedModal(true)) : setShowUserLastedModal(true)) : null;
+
   }, [buttonDisabled]);
 
   return (
@@ -215,7 +186,7 @@ const TimerScreen = ({ navigation }: any) => {
           setButtonIcon("play");
           setButtonDisabled(false);
         }}
-        component={UserLastedScreen} // pass component type, not component instance
+        component={UserLastedScreen}
       />
       <ModalScreen
         visible={showUserNotLastedModal}
@@ -229,7 +200,7 @@ const TimerScreen = ({ navigation }: any) => {
         }}
         component={UserNotLastedScreen}
         componentProps={{
-          longestLastingPlankGoal: duration,
+          longestLastingPlankGoal: lastedTimeGoal,
           lastedPlankTime: lastedTime
         }}
       />
