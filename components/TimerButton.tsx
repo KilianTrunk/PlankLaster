@@ -10,7 +10,7 @@ interface Props {
     disabled?: boolean;
 }
 
-const TimerButton = ( props: Props ) => {
+const TimerButton = (props: Props) => {
     return (
         <Button
             titleStyle={styles.buttonTitle}

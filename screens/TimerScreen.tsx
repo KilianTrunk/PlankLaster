@@ -1,13 +1,4 @@
 import React, { useState, useEffect } from "react";
-import {
-  Modal,
-  ActivityIndicator,
-  View,
-  Text,
-} from "react-native";
-import styles from "../styling/TimerScreenStyles";
-import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
-import { Button, Icon } from "@rneui/themed";
 import FirstTimeScreen from "./FirstTimeScreen";
 import WelcomeBackScreen from "./WelcomeBackScreen";
 import UserLastedScreen from "./UserLastedScreen";
@@ -17,6 +8,7 @@ import Container from "../components/Container";
 import ModalScreen from "../components/ModalScreen";
 import TimerButton from "../components/TimerButton";
 import ProfileButton from "../components/ProfileButton";
+import Timer from "../components/Timer";
 import { getAuth } from "firebase/auth";
 import { getDatabase, ref, update, get, child } from "firebase/database";
 
@@ -241,39 +233,25 @@ const TimerScreen = ({ navigation }: any) => {
           lastedPlankTime: lastedTime
         }}
       />
-      <View style={styles.timerContainer}>
-        {isNaN(duration) ? (
-          <ActivityIndicator size="large" color="#5c5470" />
-        ) : (
-          <CountdownCircleTimer
-            key={key}
-            isPlaying={isTimerPlaying}
-            strokeLinecap={"butt"}
-            duration={duration}
-            colors={["#5c5470", "#5c5470", "#A30000", "#A30000"]}
-            colorsTime={[
-              timerColorsTime[0],
-              timerColorsTime[1],
-              timerColorsTime[2],
-              timerColorsTime[3],
-            ]}
-            onUpdate={handleUpdate}
-            onComplete={() => {
-              setLastedTime(duration);
-              increaseLastedTimeGoal();
-              saveLastedTimeGoal();
-              setButtonDisabled(true);
-              saveLastedTime();
-              setButtonTitle("Congratulations!");
-              setButtonIcon("emoticon-happy");
-            }}
-          >
-            {({ remainingTime }) => (
-              <Text style={styles.timerText}>{remainingTime}</Text>
-            )}
-          </CountdownCircleTimer>
-        )}
-      </View>
+      <Timer
+        duration={duration}
+        isTimerPlaying={isTimerPlaying}
+        timerColorsTime={[
+          timerColorsTime[0],
+          timerColorsTime[1],
+          timerColorsTime[2],
+          timerColorsTime[3],
+        ]}
+        myKey={key}
+        handleUpdate={handleUpdate}
+        setLastedTime={setLastedTime}
+        increaseLastedTimeGoal={increaseLastedTimeGoal}
+        saveLastedTimeGoal={saveLastedTimeGoal}
+        setButtonDisabled={setButtonDisabled}
+        saveLastedTime={saveLastedTime}
+        setButtonTitle={setButtonTitle}
+        setButtonIcon={setButtonIcon}
+      />
       <TimerButton
         title={buttonTitle}
         icon={{
