@@ -17,23 +17,23 @@ const TimerScreen = ({ navigation }: any) => {
   const [remainingTime, setRemainingTime] = useState<number>();
   const [lastedTime, setLastedTime] = useState<number>();
   const [isTimerPlaying, setIsTimerPlaying] = useState<boolean>(false);
-  const [showFirstTimeModal, setShowFirstTimeModal] = useState<boolean>(true);
-  const [showWelcomeBackModal, setShowWelcomeBackModal] =
-    useState<boolean>(true);
   const [username, setUsername] = useState<string>("");
   const [buttonTitle, setButtonTitle] = useState<string>("Start");
   const [buttonDisabled, setButtonDisabled] = useState<boolean>(false);
   const [buttonIcon, setButtonIcon] = useState<string>("play");
-  const [showUserLastedModal, setShowUserLastedModal] =
-    useState<boolean>(false);
-  const [showUserNotLastedModal, setShowUserNotLastedModal] =
-    useState<boolean>(false);
   const [key, setKey] = useState(0);
   const [timerColorsTime, setTimerColorsTime] = useState<Array<number>>([]);
   const [lastedTimeGoal, setLastedTimeGoal] = useState<number>();
   const [userIsNew, setUserIsNew] = useState<boolean>();
   const [firstTimeModalShown, setFirstTimeModalShown] = useState<boolean>();
-  const [showProfileModal, setShowProfileModal] = useState<boolean>(false);
+  const [modals, setModals] = useState({
+    firstTimeModal: true,
+    welcomeBackModal: true,
+    userLastedModal: false,
+    userNotLastedModal: false,
+    profileModal: false,
+  });
+
 
   const checkIfUserIsNew = () => {
     const dbRef = ref(getDatabase());
@@ -133,16 +133,16 @@ const TimerScreen = ({ navigation }: any) => {
     getLastedTimeGoal();
     saveLastedTime();
 
-    buttonDisabled === true ? (buttonTitle === "I couldn't last longer" ? (saveLastedTimeGoal(), setShowUserNotLastedModal(true)) : setShowUserLastedModal(true)) : null;
+    buttonDisabled === true ? (buttonTitle === "I couldn't last longer" ? (saveLastedTimeGoal(), setModals({ ...modals, userNotLastedModal: true })) : setModals({ ...modals, userLastedModal: true })) : null;
 
   }, [buttonDisabled]);
 
   return (
     <Container paddingTop="6%">
       <ModalScreen
-        visible={showProfileModal}
+        visible={modals.profileModal}
         closeModal={() => {
-          setShowProfileModal(false);
+          setModals({ ...modals, profileModal: false });
         }}
         component={ProfileScreen}
         componentProps={{
@@ -152,22 +152,24 @@ const TimerScreen = ({ navigation }: any) => {
         }}
       />
       <ProfileButton
-        onPress={() => setShowProfileModal(true)}
+        onPress={() => {
+          setModals({ ...modals, profileModal: true });
+        }}
       />
       {duration === 34201 && userIsNew ? (
         <ModalScreen
-          visible={showFirstTimeModal}
+          visible={modals.firstTimeModal}
           closeModal={() => {
-            setShowFirstTimeModal(false);
+            setModals({ ...modals, firstTimeModal: false });
             setFirstTimeModalShown(true);
           }}
           component={FirstTimeScreen}
         />
       ) : !firstTimeModalShown ? (
         <ModalScreen
-          visible={showWelcomeBackModal}
+          visible={modals.welcomeBackModal}
           closeModal={() => {
-            setShowWelcomeBackModal(false);
+            setModals({ ...modals, welcomeBackModal: false });
           }}
           component={WelcomeBackScreen}
           componentProps={{
@@ -176,9 +178,9 @@ const TimerScreen = ({ navigation }: any) => {
         />
       ) : null}
       <ModalScreen
-        visible={showUserLastedModal}
+        visible={modals.userLastedModal}
         closeModal={() => {
-          setShowUserLastedModal(false);
+          setModals({ ...modals, userLastedModal: false });
           setIsTimerPlaying(false);
           setKey((prevKey) => prevKey + 10);
           if (lastedTimeGoal != undefined) setDuration(lastedTimeGoal);
@@ -189,9 +191,9 @@ const TimerScreen = ({ navigation }: any) => {
         component={UserLastedScreen}
       />
       <ModalScreen
-        visible={showUserNotLastedModal}
+        visible={modals.userNotLastedModal}
         closeModal={() => {
-          setShowUserNotLastedModal(false);
+          setModals({ ...modals, userNotLastedModal: false });
           setButtonDisabled(false);
           setKey((prevKey) => prevKey + 10);
           if (lastedTimeGoal != undefined) setDuration(lastedTimeGoal);
