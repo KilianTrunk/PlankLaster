@@ -9,7 +9,7 @@ import ModalScreen from "../components/ModalScreen";
 import TimerButton from "../components/TimerButton";
 import ProfileButton from "../components/ProfileButton";
 import Timer from "../components/Timer";
-import { getAuth } from "firebase/auth";
+import useAuth from "../hooks/useAuth";
 import { getDatabase, ref, update, get, child } from "firebase/database";
 
 const TimerScreen = ({ navigation }: any) => {
@@ -17,7 +17,7 @@ const TimerScreen = ({ navigation }: any) => {
   const [remainingTime, setRemainingTime] = useState<number>();
   const [lastedTime, setLastedTime] = useState<number>();
   const [isTimerPlaying, setIsTimerPlaying] = useState<boolean>(false);
-  const [username, setUsername] = useState<string>("");
+  const [username, setUsername] = useAuth();
   const [buttonTitle, setButtonTitle] = useState<string>("Start");
   const [buttonDisabled, setButtonDisabled] = useState<boolean>(false);
   const [buttonIcon, setButtonIcon] = useState<string>("play");
@@ -121,11 +121,6 @@ const TimerScreen = ({ navigation }: any) => {
   }, [duration]);
 
   useEffect(() => {
-    const auth = getAuth();
-    const user = auth.currentUser;
-
-    user && user.displayName ? setUsername(user.displayName) : null;
-
     checkIfUserIsNew();
   }, []);
 
