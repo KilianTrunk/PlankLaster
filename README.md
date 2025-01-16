@@ -1,4 +1,6 @@
-PlankLaser - mobile app to improve your plank lasting goals!
+# PlankLaser
+
+Mobile app to improve your plank lasting goals! Compete vs yourself only!
 
 ## Setup
 
